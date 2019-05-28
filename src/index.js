@@ -1,199 +1,114 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import ApolloClient from 'apollo-boost';
+import {gql} from 'apollo-boost';
+import {ApolloProvider, Query} from 'react-apollo';
 import './index.css';
 
-  function Square(props) {
-    const bgColor = (props.isWinner) ? 'green' : 'transparent';
+  const client = new ApolloClient({
+    uri: 'https://dog-graphql-api.glitch.me/graphql'
+  });
 
-    return (
-      <button 
-        className="square" 
-        onClick={props.onClick}
-        style={{backgroundColor: bgColor}}>
-        {props.value}
-      </button>
-    );
-  }
-  
-  class Board extends React.Component {
-    renderSquare(i) {
-      const ids = [0, 1, 2, 3, 4, 5, 6, 7, 8]
-
-      const squares = ids.slice(i, i + 3).map((squareId) => {
-        const isWinner = (this.props.sequence && this.props.sequence.indexOf(squareId) > -1) ? true : false;
-
-        return (
-          <Square key={squareId}
-            isWinner = {isWinner}
-            value={this.props.squares[squareId]}
-            onClick={() => this.props.onClick(squareId)} />
-          );
-      });
-
-      return squares;
+  const GET_DOGS = gql`
+    {
+      dogs {
+        id
+        breed
+      }
     }
-  
-    render() {
-      const rows = [0, 3, 6].map((id) => {
+  `;
+
+  const Dogs = ({onQuery}) => (
+    <Query query={GET_DOGS}>
+      {
+        (obj) => onQuery(obj)
+      }
+    </Query>
+  );
+
+  const GET_DOG_PHOTO = gql`
+      query Dog($breed: String!) {
+        dog(breed: $breed) {
+          id
+          displayImage
+        }
+      }
+  `;
+
+  const DogPhoto = ({ breed }) => (
+    <Query query={GET_DOG_PHOTO} variables={{ breed }}>
+      {({loading, error, data}) => {
+        if (loading) return null;
+        if (error) return `${error}`;
+
         return (
-          <div className="board-row" key={id}>
-            {this.renderSquare(id)}
+          <div>
+            <img src={data.dog.displayImage} style={{ height: 'auto', width: 250 }} alt="" />
           </div>
         );
-      }); 
+      }}
+    </Query>
+  );
 
-      return (
-        <div>
-          {rows}
-        </div>
-      );
-    }
-  }
-  
-  class Game extends React.Component {
+  class App extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-        history: [{
-          squares: Array(9).fill(null),
-        }],
-        stepNumber: 0,
-        xIsNext: true,
-        location: [ null, ],
-        order: 'ascend',
+        dogs: null,
+        selectedDog: '',
       }
     }
 
-    jumpTo(step) {
-      this.setState({
-        history: this.state.history.slice(0, step + 1),
-        stepNumber: step,
-        xIsNext: (step % 2) === 0,
-        location: this.state.location.slice(0, step + 1),
-      });
-    }
+    onQuery({loading, error, data}) {
+      if (loading) return <p>Loading...</p>;
+      if (error) return `Error! ${error.message}`;
 
-    handleClick(i) {
-      const history = this.state.history.slice(0, this.state.stepNumber + 1);
-      const current = history[history.length - 1];
-      const squares = current.squares.slice();
-      const location = this.state.location.slice();
-      
-      if (calculateWinner(squares) || squares[i]) {
-        return;
-      }
-
-      squares[i] = this.state.xIsNext ? 'X' : 'O';
-
-      this.setState({
-        history: history.concat([{
-          squares: squares,
-        }]),
-        stepNumber: history.length,
-        xIsNext: !this.state.xIsNext,
-        location: location.concat([
-          '(' + Math.floor(i / 3) + ', ' + i % 3 + ')'
-        ]),
-      });
-    }
-
-    handleSort() {
-      const order = this.state.order;
-
-      if (order === 'ascend') {
+      if (!this.state.dogs) {
         this.setState({
-          order: 'descend',
+          dogs: data.dogs,
+          selectedDog: data.dogs[0].breed,
         });
-      } else {
-        this.setState({
-          order: 'ascend',
-        });
-      }
-    }
-
-    render() {
-      let history = this.state.history;
-      const current =  history[this.state.stepNumber];
-      const winner = calculateWinner(current.squares);
-      const sortOrder = (this.state.order === 'ascend') ? 'Descending' : 'Ascending';
-
-      let moves = history.map((step, move) => {
-        const desc = (move) ? 'Go to move #' + move + ' at ' + 
-          this.state.location[move] : 'Go to game start';
-
-        if (move === this.state.stepNumber) {
-          return (
-            <li key={move}>
-              <button onClick={() => this.jumpTo(move)}><strong>{desc}</strong></button>
-            </li>
-          );
-        }
-
-        return (
-          <li key={move}>
-            <button onClick={() => this.jumpTo(move)}>{desc}</button>
-          </li>
-        );
-      });
-
-      moves = (this.state.order === 'ascend') ? moves : moves.reverse();
-
-      let status;
-      if (winner) {
-        status = 'Winner: ' + winner.side;
-      } else if (!winner && !current.squares.includes(null)) {
-        status = 'Game Draw';
-      } else {
-        status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
       }
 
       return (
-        <div className="game">
-          <div className="game-board">
-            <Board
-              sequence={(winner) ? winner.sequence : null}
-              squares={current.squares}
-              onClick={(i) => this.handleClick(i)}
-             />
-          </div>
-          <div className="game-info">
-            <div>{status}</div>
-            <button onClick={() => this.handleSort()}>Sort: {sortOrder}</button>
-            <ol>{moves}</ol>
-          </div>
+        <div>
+          <select name="dog" onChange={(obj) => this.onDogSelected(obj)}>
+            {
+              data.dogs.map(dog => (
+                <option key={dog.id} value={dog.breed}>
+                  {dog.breed}
+                </option>
+              ))
+            }
+          </select>
         </div>
       );
     }
-  }
 
-  function calculateWinner(squares) {
-    const lines = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
-    ];
-
-    for(let i = 0; i < lines.length; i++) {
-      const [a, b, c] = lines[i];
-      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-        return {
-          side: squares[a],
-          sequence: lines[i].slice()
-        };
-      }
+    onDogSelected({ target }) {
+      this.setState({
+        selectedDog: target.value,
+      });
     }
-    return null;
+
+    render () {
+      return (
+        <ApolloProvider client={client}>
+          <div>
+            <h2>My first Apollo app <span role="img" aria-label="App launch">🚀</span></h2>
+            <Dogs onQuery={(obj) => this.onQuery(obj)} />
+            <h4>{this.state.selectedDog}</h4>
+            <DogPhoto breed={this.state.selectedDog} />
+          </div>
+        </ApolloProvider>
+      );
+    }
   }
   
   // ========================================
   
   ReactDOM.render(
-    <Game />,
+    <App />,
     document.getElementById('root')
   );
   
