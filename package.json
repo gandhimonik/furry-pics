@@ -1,8 +1,8 @@
 {
-  "name": "home-seeker",
+  "name": "furry-pics",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://gandhimonik.github.io/home-seeker/",
+  "homepage": "https://gandhimonik.github.io/furry-pics/",
   "dependencies": {
     "apollo-boost": "^0.4.0",
     "graphql": "^14.3.0",
