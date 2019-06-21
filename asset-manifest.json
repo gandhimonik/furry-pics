@@ -1,15 +1,16 @@
 {
   "files": {
-    "main.css": "/home-seeker/static/css/main.0ebde3ef.chunk.css",
-    "main.js": "/home-seeker/static/js/main.ae3a8f53.chunk.js",
-    "main.js.map": "/home-seeker/static/js/main.ae3a8f53.chunk.js.map",
-    "runtime~main.js": "/home-seeker/static/js/runtime~main.003ee388.js",
-    "runtime~main.js.map": "/home-seeker/static/js/runtime~main.003ee388.js.map",
-    "static/js/2.0e3f6a1a.chunk.js": "/home-seeker/static/js/2.0e3f6a1a.chunk.js",
-    "static/js/2.0e3f6a1a.chunk.js.map": "/home-seeker/static/js/2.0e3f6a1a.chunk.js.map",
-    "index.html": "/home-seeker/index.html",
-    "precache-manifest.46e0d6cc1bd039ad0d90f346401eedb2.js": "/home-seeker/precache-manifest.46e0d6cc1bd039ad0d90f346401eedb2.js",
-    "service-worker.js": "/home-seeker/service-worker.js",
-    "static/css/main.0ebde3ef.chunk.css.map": "/home-seeker/static/css/main.0ebde3ef.chunk.css.map"
+    "main.css": "/furry-pics/static/css/main.7a4e9c41.chunk.css",
+    "main.js": "/furry-pics/static/js/main.179adad5.chunk.js",
+    "main.js.map": "/furry-pics/static/js/main.179adad5.chunk.js.map",
+    "runtime~main.js": "/furry-pics/static/js/runtime~main.dfcdc542.js",
+    "runtime~main.js.map": "/furry-pics/static/js/runtime~main.dfcdc542.js.map",
+    "static/js/2.5ebcdae7.chunk.js": "/furry-pics/static/js/2.5ebcdae7.chunk.js",
+    "static/js/2.5ebcdae7.chunk.js.map": "/furry-pics/static/js/2.5ebcdae7.chunk.js.map",
+    "index.html": "/furry-pics/index.html",
+    "precache-manifest.7d3903d62ac6c4de829fe1d81828773b.js": "/furry-pics/precache-manifest.7d3903d62ac6c4de829fe1d81828773b.js",
+    "service-worker.js": "/furry-pics/service-worker.js",
+    "static/css/main.7a4e9c41.chunk.css.map": "/furry-pics/static/css/main.7a4e9c41.chunk.css.map",
+    "static/media/semantic.min.css": "/furry-pics/static/media/outline-icons.ef60a4f6.woff"
   }
 }
