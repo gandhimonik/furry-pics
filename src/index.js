@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import ApolloClient from 'apollo-boost';
 import {gql} from 'apollo-boost';
 import {ApolloProvider, Query} from 'react-apollo';
+import './semantic.min.css';
 import './index.css';
 
   const client = new ApolloClient({
@@ -42,9 +43,7 @@ import './index.css';
         if (error) return `${error}`;
 
         return (
-          <div>
-            <img src={data.dog.displayImage} style={{ height: 'auto', width: 250 }} alt="" />
-          </div>
+          <img className="ui centered huge image" src={data.dog.displayImage} alt="" />
         );
       }}
     </Query>
@@ -72,7 +71,7 @@ import './index.css';
 
       return (
         <div>
-          <select name="dog" onChange={(obj) => this.onDogSelected(obj)}>
+          <select className="ui search fluid dropdown" name="dog" onChange={(obj) => this.onDogSelected(obj)}>
             {
               data.dogs.map(dog => (
                 <option key={dog.id} value={dog.breed}>
@@ -95,20 +94,19 @@ import './index.css';
       return (
         <ApolloProvider client={client}>
           <div>
-            <h2>My first Apollo app <span role="img" aria-label="App launch">🚀</span></h2>
+            <h1>Furry Pics</h1>
             <Dogs onQuery={(obj) => this.onQuery(obj)} />
-            <h4>{this.state.selectedDog}</h4>
+            <h2 className="ui centered header">{this.state.selectedDog}</h2>
             <DogPhoto breed={this.state.selectedDog} />
           </div>
         </ApolloProvider>
       );
     }
   }
-  
+
   // ========================================
-  
+
   ReactDOM.render(
     <App />,
     document.getElementById('root')
   );
-  
